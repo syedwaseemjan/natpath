@@ -48,3 +48,11 @@ class GatewayEndpoint:
     route_table_ids: tuple[str, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class NatGateway:
+    id: str
+    vpc_id: str
+    name: str | None
+    state: str
+
+
