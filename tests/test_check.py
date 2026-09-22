@@ -192,3 +192,34 @@ def test_endpoint_in_another_vpc_is_not_a_door() -> None:
     assert found[0].missing == ("s3", "dynamodb")
 
 
+def test_main_table_includes_only_subnets_without_an_explicit_association() -> None:
+    found = check(
+        network(
+            nat_gateways=[nat_gateway()],
+            subnets=[
+                subnet("subnet-a", name="implicit"),
+                subnet("subnet-b", name="explicit"),
+            ],
+            route_tables=[
+                table("rtb-main", is_main=True, routes=[default_nat("nat-abc")]),
+                table(
+                    "rtb-custom",
+                    subnet_ids=["subnet-b"],
+                    routes=[
+                        default_nat("nat-abc"),
+                        endpoint_route("vpce-s3"),
+                        endpoint_route("vpce-ddb"),
+                    ],
+                ),
+            ],
+            gateway_endpoints=[
+                endpoint("vpce-s3", "s3", ["rtb-custom"]),
+                endpoint("vpce-ddb", "dynamodb", ["rtb-custom"]),
+            ],
+        )
+    )
+    assert len(found) == 1
+    assert [item.id for item in found[0].subnets] == ["subnet-a"]
+    assert [item.id for item in found[0].route_tables] == ["rtb-main"]
+
+
