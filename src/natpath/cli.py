@@ -64,3 +64,40 @@ def main(
     return 0
 
 
+def read_network(
+    region: str | None,
+    profile: str | None,
+    *,
+    session_factory: Callable[..., Any] = boto3.Session,
+) -> Network:
+    try:
+        session = session_factory(profile_name=profile, region_name=region)
+    except ProfileNotFound as exc:
+        raise NatpathError(str(exc)) from None
+    resolved = session.region_name
+    if not isinstance(resolved, str) or not resolved:
+        raise NatpathError(
+            "No AWS region is set. Pass --region or set AWS_DEFAULT_REGION."
+        )
+    try:
+        return load_network(
+            session.client("ec2"),
+            session.client("lambda"),
+            resolved,
+        )
+    except NoCredentialsError:
+        raise NatpathError(
+            "No AWS credentials found. Configure the AWS CLI or an instance role."
+        ) from None
+    except NoRegionError:
+        raise NatpathError(
+            "No AWS region is set. Pass --region or set AWS_DEFAULT_REGION."
+        ) from None
+    except EndpointConnectionError:
+        raise NatpathError(
+            "Could not reach AWS. Check the region and the network."
+        ) from None
+    except ClientError as exc:
+        raise NatpathError(explain_client_error(exc)) from None
+
+
