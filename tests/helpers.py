@@ -48,3 +48,7 @@ def default_nat(nat_id: str, *, state: str = "active") -> Route:
     return route(cidr="0.0.0.0/0", nat=nat_id, state=state)
 
 
+def endpoint_route(endpoint_id: str, *, state: str = "active") -> Route:
+    return route(prefix="pl-1", gateway=endpoint_id, state=state)
+
+
