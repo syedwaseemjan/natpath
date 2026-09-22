@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<data>
-	<client ip='11.11.11.11' port='22' username='test_username' password='test_password' mail="test_email">    
-	    <alert type="memory" limit="50%" />
-	    <alert type="cpu" limit="20%" />
-	</client>
-</data>

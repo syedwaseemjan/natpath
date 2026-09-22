@@ -1,4 +1,14 @@
-*.pyc
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
 *.log
 *.db
 .DS_Store
