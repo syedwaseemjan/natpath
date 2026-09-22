@@ -91,3 +91,26 @@ def _subnet(subnet_id: str, name: str) -> dict[str, object]:
     }
 
 
+def _table() -> dict[str, object]:
+    return {
+        "RouteTableId": "rtb-111",
+        "VpcId": "vpc-1",
+        "Tags": [{"Key": "Name", "Value": "private"}],
+        "Associations": [
+            {"Main": True, "AssociationState": {"State": "associated"}},
+            {
+                "SubnetId": "subnet-a",
+                "Main": False,
+                "AssociationState": {"State": "associated"},
+            },
+        ],
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "State": "active",
+            }
+        ],
+    }
+
+
