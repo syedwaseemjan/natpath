@@ -72,3 +72,9 @@ class Network:
     lambdas: tuple[LambdaFunction, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class RouteTableRef:
+    id: str
+    name: str | None
+
+
