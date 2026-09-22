@@ -55,3 +55,18 @@ def test_region_and_profile_are_forwarded() -> None:
     assert seen == {"region": "eu-west-1", "profile": "prod"}
 
 
+def test_a_read_error_goes_to_stderr_and_exits_2(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    def reader(region: str | None, profile: str | None) -> Network:
+        raise NatpathError(
+            "Cannot read the network: DescribeNatGateways was denied "
+            "(UnauthorizedOperation)."
+        )
+
+    assert main([], reader=reader) == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "DescribeNatGateways was denied" in captured.err
+
+
