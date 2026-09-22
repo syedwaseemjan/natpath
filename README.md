@@ -65,3 +65,12 @@ The door covers S3 and DynamoDB in this region. Calls to another region still us
 A route table sends outside traffic through a NAT when it has an active `0.0.0.0/0` route to that NAT gateway. The subnets on that table are the ones listed. A subnet with an explicit association uses that table. Every other subnet in the VPC uses the main route table.
 
 A free door is an active route to an available gateway endpoint for that service. An endpoint that exists only on some other route table does not count. A blackhole route does not count. The Lambda line is how many functions have a VPC subnet in that set. The finding is the missing door, including when the count is zero, because other workloads in those subnets use the same path.
+
+## Development
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+ruff check src tests && ruff format --check src tests && mypy && pytest
+```
