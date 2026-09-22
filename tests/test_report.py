@@ -123,3 +123,23 @@ def test_blank_output_when_there_is_nothing_to_report() -> None:
     assert render(()) == ""
 
 
+def test_findings_are_separated_by_a_blank_line() -> None:
+    first = Finding(
+        nat_id="nat-a",
+        nat_name=None,
+        subnets=(Subnet("subnet-a", "vpc-1", None),),
+        route_tables=(RouteTableRef("rtb-a", None),),
+        missing=("s3",),
+        lambda_count=0,
+    )
+    second = Finding(
+        nat_id="nat-b",
+        nat_name="  edge \n gateway  ",
+        subnets=(Subnet("subnet-b", "vpc-1", "app"),),
+        route_tables=(RouteTableRef("rtb-b", None),),
+        missing=("dynamodb",),
+        lambda_count=2,
+    )
+    text = render([first, second])
+    assert text == render([first]).rstrip("\n") + "\n\n" + render([second])
+    assert "NAT gateway nat-b (edge gateway)" in text
