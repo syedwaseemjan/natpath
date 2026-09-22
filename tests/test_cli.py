@@ -70,3 +70,12 @@ def test_a_read_error_goes_to_stderr_and_exits_2(
     assert "DescribeNatGateways was denied" in captured.err
 
 
+def test_help_and_version_exit_0() -> None:
+    with pytest.raises(SystemExit) as help_exit:
+        main(["--help"])
+    assert help_exit.value.code == 0
+    with pytest.raises(SystemExit) as version_exit:
+        main(["--version"])
+    assert version_exit.value.code == 0
+
+
