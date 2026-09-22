@@ -54,3 +54,21 @@ def test_pages_merge_and_only_s3_and_dynamodb_gateway_endpoints_are_kept() -> No
     assert ec2.paginators["describe_subnets"].calls == [{}]
 
 
+def test_blank_name_tag_is_dropped() -> None:
+    loaded = network_from_descriptions(
+        region="us-east-1",
+        nat_gateways=[
+            {
+                "NatGatewayId": "nat-1",
+                "VpcId": "vpc-1",
+                "Tags": [{"Key": "Name", "Value": "   "}],
+            }
+        ],
+        subnets=[],
+        route_tables=[],
+        vpc_endpoints=[],
+        functions=[],
+    )
+    assert loaded.nat_gateways[0].name is None
+
+
