@@ -62,3 +62,13 @@ class LambdaFunction:
     subnet_ids: tuple[str, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class Network:
+    region: str
+    nat_gateways: tuple[NatGateway, ...]
+    subnets: tuple[Subnet, ...]
+    route_tables: tuple[RouteTable, ...]
+    gateway_endpoints: tuple[GatewayEndpoint, ...]
+    lambdas: tuple[LambdaFunction, ...]
+
+
