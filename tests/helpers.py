@@ -92,3 +92,20 @@ def fn(name: str, subnet_ids: Iterable[str] = ()) -> LambdaFunction:
     return LambdaFunction(name=name, subnet_ids=tuple(subnet_ids))
 
 
+def network(
+    *,
+    region: str = "us-east-1",
+    nat_gateways: Iterable[NatGateway] = (),
+    subnets: Iterable[Subnet] = (),
+    route_tables: Iterable[RouteTable] = (),
+    gateway_endpoints: Iterable[GatewayEndpoint] = (),
+    lambdas: Iterable[LambdaFunction] = (),
+) -> Network:
+    return Network(
+        region=region,
+        nat_gateways=tuple(nat_gateways),
+        subnets=tuple(subnets),
+        route_tables=tuple(route_tables),
+        gateway_endpoints=tuple(gateway_endpoints),
+        lambdas=tuple(lambdas),
+    )
