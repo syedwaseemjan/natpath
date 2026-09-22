@@ -13,3 +13,12 @@ class Subnet:
     name: str | None
 
 
+@dataclass(frozen=True, slots=True)
+class Route:
+    destination_cidr: str | None
+    destination_prefix_list_id: str | None
+    nat_gateway_id: str | None
+    gateway_id: str | None
+    state: str
+
+
