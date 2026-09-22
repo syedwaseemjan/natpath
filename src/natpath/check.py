@@ -83,3 +83,9 @@ def check(network: Network) -> tuple[Finding, ...]:
     return tuple(findings)
 
 
+class _Piece:
+    def __init__(self, table: RouteTable, subnets: tuple[Subnet, ...]) -> None:
+        self.table = table
+        self.subnets = subnets
+
+
