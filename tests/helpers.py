@@ -88,3 +88,7 @@ def endpoint(
     )
 
 
+def fn(name: str, subnet_ids: Iterable[str] = ()) -> LambdaFunction:
+    return LambdaFunction(name=name, subnet_ids=tuple(subnet_ids))
+
+
