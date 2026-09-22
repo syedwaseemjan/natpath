@@ -44,3 +44,7 @@ def route(
     )
 
 
+def default_nat(nat_id: str, *, state: str = "active") -> Route:
+    return route(cidr="0.0.0.0/0", nat=nat_id, state=state)
+
+
