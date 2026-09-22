@@ -15,9 +15,9 @@ natpath --region us-east-1
 natpath --profile prod
 ```
 
-It reads one region: the region in your AWS configuration, or the one you pass with `--region`. It uses the credentials you already have. It does not change the network, and it does not read Cost Explorer.
+It reads one region: the region in your AWS configuration, or the one you pass with `--region`. Point `--region` at the region where the NAT gateways are. A quiet run in some other region prints nothing while that bill is still there. It uses the credentials you already have. It does not change the network, and it does not read Cost Explorer.
 
-A quiet run prints nothing and exits 0. A missing door prints the finding and exits 1. Exit 2 means AWS could not be read.
+A quiet run prints nothing and exits 0. That means this region has nothing to fix. A missing door prints the finding and exits 1. Exit 2 means AWS could not be read.
 
 ## Example
 
