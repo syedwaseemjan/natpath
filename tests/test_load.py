@@ -114,3 +114,14 @@ def _table() -> dict[str, object]:
     }
 
 
+def _endpoint(
+    endpoint_id: str, service: str, *, type_: str = "Gateway"
+) -> dict[str, object]:
+    return {
+        "VpcEndpointId": endpoint_id,
+        "VpcId": "vpc-1",
+        "ServiceName": service,
+        "VpcEndpointType": type_,
+        "State": "available",
+        "RouteTableIds": ["rtb-111", "rtb-111"],
+    }
