@@ -227,3 +227,8 @@ def _unique(values: list[str]) -> tuple[str, ...]:
     return tuple(seen)
 
 
+def _text(value: object) -> str | None:
+    if isinstance(value, str):
+        stripped = value.strip()
+        return stripped or None
+    return None
