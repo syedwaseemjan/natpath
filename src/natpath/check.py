@@ -107,3 +107,14 @@ def _subnets_for_table(
     return tuple(chosen.values())
 
 
+def _nat_target(table: RouteTable) -> str | None:
+    for route in table.routes:
+        if (
+            route.destination_cidr == "0.0.0.0/0"
+            and route.state == "active"
+            and route.nat_gateway_id
+        ):
+            return route.nat_gateway_id
+    return None
+
+
