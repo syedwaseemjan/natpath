@@ -139,3 +139,24 @@ def test_missing_credentials_are_reported() -> None:
         read_network("us-east-1", None, session_factory=lambda **kwargs: Session())
 
 
+def test_read_network_uses_the_session_clients() -> None:
+    ec2 = ec2_client(nat_gateways=[{"NatGatewayId": "nat-abc", "VpcId": "vpc-1"}])
+    functions = lambda_client()
+
+    class Session:
+        region_name = "eu-west-1"
+
+        def client(self, name: str) -> object:
+            if name == "ec2":
+                return ec2
+            if name == "lambda":
+                return functions
+            raise AssertionError(name)
+
+    loaded = read_network(
+        "eu-west-1",
+        "prod",
+        session_factory=lambda **kwargs: Session(),
+    )
+    assert loaded.region == "eu-west-1"
+    assert [item.id for item in loaded.nat_gateways] == ["nat-abc"]
