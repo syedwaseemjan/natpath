@@ -37,3 +37,10 @@ def _render_finding(finding: Finding) -> str:
     return "\n".join(lines)
 
 
+def _nat_heading(finding: Finding) -> str:
+    name = _shown(finding.nat_name)
+    if name:
+        return f"NAT gateway {finding.nat_id} ({name})"
+    return f"NAT gateway {finding.nat_id}"
+
+
