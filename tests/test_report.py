@@ -55,3 +55,28 @@ def test_story_prints_the_missing_doors_in_plain_words() -> None:
     assert text == STORY
 
 
+def test_one_missing_door_names_only_that_service() -> None:
+    text = render(
+        check(
+            network(
+                subnets=[subnet("subnet-a")],
+                route_tables=[
+                    table(
+                        "rtb-111",
+                        subnet_ids=["subnet-a"],
+                        routes=[default_nat("nat-abc"), endpoint_route("vpce-s3")],
+                    )
+                ],
+                gateway_endpoints=[endpoint("vpce-s3", "s3", ["rtb-111"])],
+                lambdas=[fn("job", ["subnet-a"])],
+            )
+        )
+    )
+    assert "There is no free private door for DynamoDB." in text
+    assert "for S3." not in text
+    assert "Their DynamoDB traffic is on the NAT bill." in text
+    assert "Adding the free door takes that traffic off the bill." in text
+    assert "1 Lambda runs in these subnets." in text
+    assert "This private subnet sends all outside traffic through it:" in text
+
+
