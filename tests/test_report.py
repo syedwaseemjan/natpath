@@ -119,3 +119,7 @@ NAT gateway nat-abc
     )
 
 
+def test_blank_output_when_there_is_nothing_to_report() -> None:
+    assert render(()) == ""
+
+
