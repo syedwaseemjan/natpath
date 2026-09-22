@@ -325,3 +325,33 @@ def test_same_nat_with_different_gaps_stays_two_findings() -> None:
     assert [item.lambda_count for item in found] == [1, 1]
 
 
+def test_tables_with_the_same_gap_merge_under_one_nat() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-b", name="b"), subnet("subnet-a", name="a")],
+            route_tables=[
+                table(
+                    "rtb-b",
+                    name="b",
+                    subnet_ids=["subnet-b"],
+                    routes=[default_nat("nat-abc")],
+                ),
+                table(
+                    "rtb-a",
+                    name="a",
+                    subnet_ids=["subnet-a"],
+                    routes=[default_nat("nat-abc")],
+                ),
+            ],
+            lambdas=[
+                fn("shared", ["subnet-a", "subnet-b"]),
+                fn("only-b", ["subnet-b"]),
+            ],
+        )
+    )
+    assert len(found) == 1
+    assert [item.id for item in found[0].subnets] == ["subnet-a", "subnet-b"]
+    assert [item.id for item in found[0].route_tables] == ["rtb-a", "rtb-b"]
+    assert found[0].lambda_count == 2
+
+
