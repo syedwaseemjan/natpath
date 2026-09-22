@@ -88,3 +88,11 @@ def _parse_nat_gateway(item: Mapping[str, Any]) -> NatGateway | None:
     )
 
 
+def _parse_subnet(item: Mapping[str, Any]) -> Subnet | None:
+    subnet_id = _text(item.get("SubnetId"))
+    vpc_id = _text(item.get("VpcId"))
+    if subnet_id is None or vpc_id is None:
+        return None
+    return Subnet(id=subnet_id, vpc_id=vpc_id, name=_name(item))
+
+
