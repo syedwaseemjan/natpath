@@ -139,3 +139,30 @@ def _parse_route(item: Mapping[str, Any]) -> Route:
     )
 
 
+def _parse_endpoint(item: Mapping[str, Any]) -> GatewayEndpoint | None:
+    if item.get("VpcEndpointType") != "Gateway":
+        return None
+    endpoint_id = _text(item.get("VpcEndpointId"))
+    vpc_id = _text(item.get("VpcId"))
+    service_name = _text(item.get("ServiceName"))
+    if endpoint_id is None or vpc_id is None or service_name is None:
+        return None
+    service = _service_kind(service_name)
+    if service is None:
+        return None
+    table_ids: list[str] = []
+    raw_tables = item.get("RouteTableIds") or []
+    if isinstance(raw_tables, list):
+        for raw_id in raw_tables:
+            table_id = _text(raw_id)
+            if table_id is not None:
+                table_ids.append(table_id)
+    return GatewayEndpoint(
+        id=endpoint_id,
+        vpc_id=vpc_id,
+        service=service,
+        state=_text(item.get("State")) or "",
+        route_table_ids=_unique(table_ids),
+    )
+
+
