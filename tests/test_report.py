@@ -80,3 +80,42 @@ def test_one_missing_door_names_only_that_service() -> None:
     assert "This private subnet sends all outside traffic through it:" in text
 
 
+def test_no_lambdas_and_unnamed_resources() -> None:
+    text = render(
+        check(
+            network(
+                subnets=[subnet("subnet-a"), subnet("subnet-b")],
+                route_tables=[
+                    table(
+                        "rtb-b",
+                        subnet_ids=["subnet-b"],
+                        routes=[default_nat("nat-abc")],
+                    ),
+                    table(
+                        "rtb-a",
+                        subnet_ids=["subnet-a"],
+                        routes=[default_nat("nat-abc")],
+                    ),
+                ],
+            )
+        )
+    )
+    assert (
+        text
+        == """\
+NAT gateway nat-abc
+  These private subnets send all outside traffic through it:
+    subnet-a
+    subnet-b
+  Route tables:
+    rtb-a
+    rtb-b
+  There is no free private door for S3.
+  There is no free private door for DynamoDB.
+  No Lambdas run in these subnets.
+  Their S3 and DynamoDB traffic is on the NAT bill.
+  Adding the free doors takes that traffic off the bill.
+"""
+    )
+
+
