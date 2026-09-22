@@ -286,3 +286,15 @@ def test_blackhole_nat_route_is_quiet() -> None:
     assert found == ()
 
 
+def test_nat_with_no_subnets_is_quiet() -> None:
+    found = check(
+        network(
+            nat_gateways=[nat_gateway()],
+            route_tables=[
+                table("rtb-main", is_main=True, routes=[default_nat("nat-abc")])
+            ],
+        )
+    )
+    assert found == ()
+
+
