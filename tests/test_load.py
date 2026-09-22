@@ -72,3 +72,14 @@ def test_blank_name_tag_is_dropped() -> None:
     assert loaded.nat_gateways[0].name is None
 
 
+def _nat(nat_id: str, name: str | None = None) -> dict[str, object]:
+    item: dict[str, object] = {
+        "NatGatewayId": nat_id,
+        "VpcId": "vpc-1",
+        "State": "available",
+    }
+    if name is not None:
+        item["Tags"] = [{"Key": "Name", "Value": name}]
+    return item
+
+
