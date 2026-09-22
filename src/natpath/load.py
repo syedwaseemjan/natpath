@@ -54,3 +54,13 @@ def network_from_descriptions(
     )
 
 
+def _collect(client: Any, operation: str, key: str, **kwargs: Any) -> list[Any]:
+    paginator = client.get_paginator(operation)
+    items: list[Any] = []
+    for page in paginator.paginate(**kwargs):
+        batch = page.get(key, [])
+        if isinstance(batch, list):
+            items.extend(batch)
+    return items
+
+
