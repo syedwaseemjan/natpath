@@ -31,3 +31,15 @@ def test_findings_go_to_stdout_and_exit_1(capsys: pytest.CaptureFixture[str]) ->
     assert captured.err == ""
 
 
+def test_a_clean_network_prints_nothing_and_exits_0(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    def reader(region: str | None, profile: str | None) -> Network:
+        return network()
+
+    assert main([], reader=reader) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
