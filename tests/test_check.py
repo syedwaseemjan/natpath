@@ -175,3 +175,20 @@ def test_endpoint_state_must_be_available(state: str) -> None:
     assert found[0].missing == ("s3", "dynamodb")
 
 
+def test_endpoint_in_another_vpc_is_not_a_door() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-a")],
+            route_tables=[
+                table(
+                    "rtb-111",
+                    subnet_ids=["subnet-a"],
+                    routes=[default_nat("nat-abc"), endpoint_route("vpce-s3")],
+                )
+            ],
+            gateway_endpoints=[endpoint("vpce-s3", "s3", ["rtb-111"], vpc="vpc-2")],
+        )
+    )
+    assert found[0].missing == ("s3", "dynamodb")
+
+
