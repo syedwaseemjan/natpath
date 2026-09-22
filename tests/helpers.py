@@ -71,3 +71,20 @@ def table(
     )
 
 
+def endpoint(
+    id: str,
+    service: Service,
+    route_table_ids: Iterable[str] = (),
+    *,
+    vpc: str = "vpc-1",
+    state: str = "available",
+) -> GatewayEndpoint:
+    return GatewayEndpoint(
+        id=id,
+        vpc_id=vpc,
+        service=service,
+        state=state,
+        route_table_ids=tuple(route_table_ids),
+    )
+
+
