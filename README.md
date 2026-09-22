@@ -38,3 +38,24 @@ NAT gateway nat-abc (prod)
 For each printed route table, add a gateway endpoint for S3 and a gateway endpoint for DynamoDB, then run `natpath` again. Choose the gateway endpoint type. The interface type is a separate PrivateLink service, and this traffic stays on the NAT until the gateway type is on the route.
 
 The door covers S3 and DynamoDB in this region. Calls to another region still use the NAT. The hourly NAT charge is unchanged. The command cannot see how many bytes moved. It sees the path: anything in these subnets that calls those services in this region is paying the NAT data charge for those bytes.
+
+## Permissions
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeNatGateways",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeVpcEndpoints",
+        "lambda:ListFunctions"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
