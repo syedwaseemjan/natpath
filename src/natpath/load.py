@@ -210,3 +210,13 @@ def _association_active(assoc: Mapping[str, Any]) -> bool:
     return state in (None, "associated")
 
 
+def _name(item: Mapping[str, Any]) -> str | None:
+    tags = item.get("Tags")
+    if not isinstance(tags, list):
+        return None
+    for tag in tags:
+        if isinstance(tag, Mapping) and tag.get("Key") == "Name":
+            return _text(tag.get("Value"))
+    return None
+
+
