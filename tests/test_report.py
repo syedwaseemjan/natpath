@@ -27,3 +27,31 @@ NAT gateway nat-abc (prod)
 """
 
 
+def test_story_prints_the_missing_doors_in_plain_words() -> None:
+    lambdas = [fn(f"job-{i}", ["subnet-a"]) for i in range(11)]
+    lambdas.append(fn("shared", ["subnet-a", "subnet-b"]))
+    lambdas.append(fn("other-net", ["subnet-other"]))
+    text = render(
+        check(
+            network(
+                nat_gateways=[nat_gateway("nat-abc", name="prod")],
+                subnets=[
+                    subnet("subnet-b", name="app-b"),
+                    subnet("subnet-a", name="app-a"),
+                    subnet("subnet-other", vpc="vpc-9"),
+                ],
+                route_tables=[
+                    table(
+                        "rtb-111",
+                        name="private",
+                        subnet_ids=["subnet-a", "subnet-b"],
+                        routes=[default_nat("nat-abc")],
+                    )
+                ],
+                lambdas=lambdas,
+            )
+        )
+    )
+    assert text == STORY
+
+
