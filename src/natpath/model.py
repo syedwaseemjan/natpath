@@ -56,3 +56,9 @@ class NatGateway:
     state: str
 
 
+@dataclass(frozen=True, slots=True)
+class LambdaFunction:
+    name: str
+    subnet_ids: tuple[str, ...]
+
+
