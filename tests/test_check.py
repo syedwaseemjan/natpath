@@ -368,3 +368,69 @@ def test_findings_are_sorted_by_nat_gateway_id() -> None:
     assert [item.nat_id for item in found] == ["nat-a", "nat-b"]
 
 
+def test_disassociated_subnet_uses_the_main_route_table() -> None:
+    loaded = network_from_descriptions(
+        region="us-east-1",
+        nat_gateways=[
+            {
+                "NatGatewayId": "nat-abc",
+                "VpcId": "vpc-1",
+                "State": "available",
+                "Tags": [{"Key": "Name", "Value": "prod"}],
+            }
+        ],
+        subnets=[
+            {
+                "SubnetId": "subnet-b",
+                "VpcId": "vpc-1",
+                "Tags": [{"Key": "Name", "Value": "app"}],
+            }
+        ],
+        route_tables=[
+            {
+                "RouteTableId": "rtb-main",
+                "VpcId": "vpc-1",
+                "Associations": [
+                    {"Main": True, "AssociationState": {"State": "associated"}}
+                ],
+                "Routes": [
+                    {
+                        "DestinationCidrBlock": "10.0.0.0/16",
+                        "GatewayId": "local",
+                        "State": "active",
+                    },
+                    {
+                        "DestinationCidrBlock": "0.0.0.0/0",
+                        "NatGatewayId": "nat-abc",
+                        "State": "active",
+                    },
+                ],
+            },
+            {
+                "RouteTableId": "rtb-custom",
+                "VpcId": "vpc-1",
+                "Associations": [
+                    {
+                        "SubnetId": "subnet-b",
+                        "Main": False,
+                        "AssociationState": {"State": "disassociated"},
+                    }
+                ],
+                "Routes": [
+                    {
+                        "DestinationCidrBlock": "0.0.0.0/0",
+                        "GatewayId": "igw-1",
+                        "State": "active",
+                    }
+                ],
+            },
+        ],
+        vpc_endpoints=[],
+        functions=[{"FunctionName": "job", "VpcConfig": {"SubnetIds": ["subnet-b"]}}],
+    )
+    found = check(loaded)
+    assert len(found) == 1
+    assert found[0].nat_name == "prod"
+    assert [item.id for item in found[0].subnets] == ["subnet-b"]
+    assert [item.id for item in found[0].route_tables] == ["rtb-main"]
+    assert found[0].lambda_count == 1
