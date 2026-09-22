@@ -21,3 +21,26 @@ class FakeAws:
         return self.paginators[name]
 
 
+def ec2_client(
+    *,
+    nat_gateways: list[dict[str, Any]] | None = None,
+    subnets: list[dict[str, Any]] | None = None,
+    route_tables: list[dict[str, Any]] | None = None,
+    vpc_endpoints: list[dict[str, Any]] | None = None,
+    nat_pages: list[dict[str, Any]] | None = None,
+    endpoint_pages: list[dict[str, Any]] | None = None,
+) -> FakeAws:
+    return FakeAws(
+        {
+            "describe_nat_gateways": nat_pages
+            if nat_pages is not None
+            else [{"NatGateways": nat_gateways or []}],
+            "describe_subnets": [{"Subnets": subnets or []}],
+            "describe_route_tables": [{"RouteTables": route_tables or []}],
+            "describe_vpc_endpoints": endpoint_pages
+            if endpoint_pages is not None
+            else [{"VpcEndpoints": vpc_endpoints or []}],
+        }
+    )
+
+
