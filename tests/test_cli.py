@@ -120,3 +120,22 @@ def test_denied_api_names_the_operation() -> None:
         read_network("us-east-1", None, session_factory=lambda **kwargs: Session())
 
 
+def test_missing_credentials_are_reported() -> None:
+    class Boom:
+        def paginate(self, **kwargs: object) -> object:
+            raise NoCredentialsError()
+
+    class Client:
+        def get_paginator(self, name: str) -> Boom:
+            return Boom()
+
+    class Session:
+        region_name = "us-east-1"
+
+        def client(self, name: str) -> Client:
+            return Client()
+
+    with pytest.raises(NatpathError, match="No AWS credentials"):
+        read_network("us-east-1", None, session_factory=lambda **kwargs: Session())
+
+
