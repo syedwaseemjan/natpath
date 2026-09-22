@@ -44,3 +44,12 @@ ignore = ["E501"]
 [tool.ruff.lint.isort]
 known-first-party = ["natpath"]
 
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["boto3", "botocore", "botocore.*"]
+ignore_missing_imports = true
