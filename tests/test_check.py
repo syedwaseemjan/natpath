@@ -355,3 +355,16 @@ def test_tables_with_the_same_gap_merge_under_one_nat() -> None:
     assert found[0].lambda_count == 2
 
 
+def test_findings_are_sorted_by_nat_gateway_id() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-b"), subnet("subnet-a")],
+            route_tables=[
+                table("rtb-b", subnet_ids=["subnet-b"], routes=[default_nat("nat-b")]),
+                table("rtb-a", subnet_ids=["subnet-a"], routes=[default_nat("nat-a")]),
+            ],
+        )
+    )
+    assert [item.nat_id for item in found] == ["nat-a", "nat-b"]
+
+
