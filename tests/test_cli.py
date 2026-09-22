@@ -98,3 +98,25 @@ def test_unknown_profile_is_reported() -> None:
         read_network("us-east-1", "prod", session_factory=factory)
 
 
+def test_denied_api_names_the_operation() -> None:
+    class Boom:
+        def paginate(self, **kwargs: object) -> object:
+            raise ClientError(
+                {"Error": {"Code": "UnauthorizedOperation", "Message": "no"}},
+                "DescribeRouteTables",
+            )
+
+    class Client:
+        def get_paginator(self, name: str) -> Boom:
+            return Boom()
+
+    class Session:
+        region_name = "us-east-1"
+
+        def client(self, name: str) -> Client:
+            return Client()
+
+    with pytest.raises(NatpathError, match="DescribeRouteTables was denied"):
+        read_network("us-east-1", None, session_factory=lambda **kwargs: Session())
+
+
