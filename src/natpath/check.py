@@ -149,3 +149,5 @@ def _subnet_key(subnet: Subnet) -> tuple[bool, str, str]:
     return _named_key(subnet.name, subnet.id)
 
 
+def _named_key(name: str | None, id_: str) -> tuple[bool, str, str]:
+    return (name is None, (name or "").casefold(), id_)
