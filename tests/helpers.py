@@ -52,3 +52,22 @@ def endpoint_route(endpoint_id: str, *, state: str = "active") -> Route:
     return route(prefix="pl-1", gateway=endpoint_id, state=state)
 
 
+def table(
+    id: str,
+    *,
+    vpc: str = "vpc-1",
+    name: str | None = None,
+    is_main: bool = False,
+    subnet_ids: Iterable[str] = (),
+    routes: Iterable[Route] = (),
+) -> RouteTable:
+    return RouteTable(
+        id=id,
+        vpc_id=vpc,
+        name=name,
+        is_main=is_main,
+        subnet_ids=tuple(subnet_ids),
+        routes=tuple(routes),
+    )
+
+
