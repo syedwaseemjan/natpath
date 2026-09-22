@@ -44,3 +44,5 @@ def ec2_client(
     )
 
 
+def lambda_client(functions: list[dict[str, Any]] | None = None) -> FakeAws:
+    return FakeAws({"list_functions": [{"Functions": functions or []}]})
