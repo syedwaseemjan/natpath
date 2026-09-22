@@ -157,3 +157,21 @@ def test_blackhole_route_is_not_a_door() -> None:
     assert found[0].missing == ("s3",)
 
 
+@pytest.mark.parametrize("state", ["pending", "deleted", "rejected", "failed"])
+def test_endpoint_state_must_be_available(state: str) -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-a")],
+            route_tables=[
+                table(
+                    "rtb-111",
+                    subnet_ids=["subnet-a"],
+                    routes=[default_nat("nat-abc"), endpoint_route("vpce-s3")],
+                )
+            ],
+            gateway_endpoints=[endpoint("vpce-s3", "s3", ["rtb-111"], state=state)],
+        )
+    )
+    assert found[0].missing == ("s3", "dynamodb")
+
+
