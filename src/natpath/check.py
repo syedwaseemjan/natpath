@@ -140,3 +140,8 @@ def _open_doors(
     return frozenset(open_services)
 
 
+def _finding_key(finding: Finding) -> tuple[str, str, tuple[Service, ...]]:
+    table_id = finding.route_tables[0].id if finding.route_tables else ""
+    return (finding.nat_id, table_id, finding.missing)
+
+
