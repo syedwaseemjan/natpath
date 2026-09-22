@@ -9,7 +9,7 @@ You run it, add the missing gateway endpoints on the printed route tables, and r
 ## Run
 
 ```bash
-pip install .
+pip install natpath
 natpath
 natpath --region us-east-1
 natpath --profile prod

@@ -19,6 +19,11 @@ classifiers = [
 ]
 dependencies = ["boto3>=1.34"]
 
+[project.urls]
+Homepage = "https://github.com/syedwaseemjan/natpath"
+Repository = "https://github.com/syedwaseemjan/natpath"
+Issues = "https://github.com/syedwaseemjan/natpath/issues"
+
 [project.optional-dependencies]
 dev = ["mypy>=1.11", "pytest>=8", "ruff>=0.6"]
 
