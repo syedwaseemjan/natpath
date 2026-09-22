@@ -17,3 +17,5 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
 ]
+dependencies = ["boto3>=1.34"]
+
