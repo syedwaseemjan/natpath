@@ -96,3 +96,36 @@ def _parse_subnet(item: Mapping[str, Any]) -> Subnet | None:
     return Subnet(id=subnet_id, vpc_id=vpc_id, name=_name(item))
 
 
+def _parse_route_table(item: Mapping[str, Any]) -> RouteTable | None:
+    table_id = _text(item.get("RouteTableId"))
+    vpc_id = _text(item.get("VpcId"))
+    if table_id is None or vpc_id is None:
+        return None
+    subnet_ids: list[str] = []
+    is_main = False
+    associations = item.get("Associations") or []
+    if isinstance(associations, list):
+        for assoc in associations:
+            if not isinstance(assoc, Mapping) or not _association_active(assoc):
+                continue
+            if assoc.get("Main") is True:
+                is_main = True
+            subnet_id = _text(assoc.get("SubnetId"))
+            if subnet_id is not None:
+                subnet_ids.append(subnet_id)
+    routes: list[Route] = []
+    raw_routes = item.get("Routes") or []
+    if isinstance(raw_routes, list):
+        for raw in raw_routes:
+            if isinstance(raw, Mapping):
+                routes.append(_parse_route(raw))
+    return RouteTable(
+        id=table_id,
+        vpc_id=vpc_id,
+        name=_name(item),
+        is_main=is_main,
+        subnet_ids=_unique(subnet_ids),
+        routes=tuple(routes),
+    )
+
+
