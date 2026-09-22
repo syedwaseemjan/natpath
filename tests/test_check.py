@@ -82,3 +82,27 @@ def test_both_free_doors_on_the_route_are_quiet() -> None:
     assert found == ()
 
 
+def test_active_route_is_the_door_when_the_association_list_is_empty() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-a")],
+            route_tables=[
+                table(
+                    "rtb-111",
+                    subnet_ids=["subnet-a"],
+                    routes=[
+                        default_nat("nat-abc"),
+                        endpoint_route("vpce-s3"),
+                        endpoint_route("vpce-ddb"),
+                    ],
+                )
+            ],
+            gateway_endpoints=[
+                endpoint("vpce-s3", "s3"),
+                endpoint("vpce-ddb", "dynamodb"),
+            ],
+        )
+    )
+    assert found == ()
+
+
