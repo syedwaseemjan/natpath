@@ -220,3 +220,10 @@ def _name(item: Mapping[str, Any]) -> str | None:
     return None
 
 
+def _unique(values: list[str]) -> tuple[str, ...]:
+    seen: dict[str, None] = {}
+    for value in values:
+        seen.setdefault(value, None)
+    return tuple(seen)
+
+
