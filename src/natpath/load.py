@@ -166,3 +166,23 @@ def _parse_endpoint(item: Mapping[str, Any]) -> GatewayEndpoint | None:
     )
 
 
+def _parse_lambda(item: Mapping[str, Any]) -> LambdaFunction | None:
+    name = _text(item.get("FunctionName"))
+    if name is None:
+        return None
+    vpc = item.get("VpcConfig")
+    raw_ids: list[Any] = []
+    if isinstance(vpc, Mapping):
+        subnet_ids = vpc.get("SubnetIds") or []
+        if isinstance(subnet_ids, list):
+            raw_ids = subnet_ids
+    cleaned: list[str] = []
+    for raw in raw_ids:
+        text = _text(raw)
+        if text is not None:
+            cleaned.append(text)
+    if not cleaned:
+        return None
+    return LambdaFunction(name=name, subnet_ids=_unique(cleaned))
+
+
