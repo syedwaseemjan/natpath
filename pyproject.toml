@@ -32,3 +32,15 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src", "tests"]
 
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["natpath"]
+
