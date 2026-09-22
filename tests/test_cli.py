@@ -43,3 +43,15 @@ def test_a_clean_network_prints_nothing_and_exits_0(
     assert captured.err == ""
 
 
+def test_region_and_profile_are_forwarded() -> None:
+    seen: dict[str, str | None] = {}
+
+    def reader(region: str | None, profile: str | None) -> Network:
+        seen["region"] = region
+        seen["profile"] = profile
+        return network()
+
+    assert main(["--region", "eu-west-1", "--profile", "prod"], reader=reader) == 0
+    assert seen == {"region": "eu-west-1", "profile": "prod"}
+
+
