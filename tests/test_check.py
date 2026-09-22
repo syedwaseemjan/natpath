@@ -106,3 +106,29 @@ def test_active_route_is_the_door_when_the_association_list_is_empty() -> None:
     assert found == ()
 
 
+def test_an_endpoint_on_another_route_table_is_not_this_subnets_door() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-a")],
+            route_tables=[
+                table(
+                    "rtb-private",
+                    subnet_ids=["subnet-a"],
+                    routes=[default_nat("nat-abc")],
+                ),
+                table(
+                    "rtb-other",
+                    routes=[endpoint_route("vpce-s3"), endpoint_route("vpce-ddb")],
+                ),
+            ],
+            gateway_endpoints=[
+                endpoint("vpce-s3", "s3", ["rtb-other"]),
+                endpoint("vpce-ddb", "dynamodb", ["rtb-other"]),
+            ],
+        )
+    )
+    assert len(found) == 1
+    assert found[0].missing == ("s3", "dynamodb")
+    assert [item.id for item in found[0].subnets] == ["subnet-a"]
+
+
