@@ -101,3 +101,12 @@ def read_network(
         raise NatpathError(explain_client_error(exc)) from None
 
 
+def explain_client_error(exc: ClientError) -> str:
+    error = exc.response.get("Error", {})
+    code = error.get("Code") or "Error"
+    operation = exc.operation_name or "the AWS API"
+    if code in _DENIED:
+        return f"Cannot read the network: {operation} was denied ({code})."
+    return f"AWS request failed: {operation} ({code})."
+
+
