@@ -298,3 +298,30 @@ def test_nat_with_no_subnets_is_quiet() -> None:
     assert found == ()
 
 
+def test_same_nat_with_different_gaps_stays_two_findings() -> None:
+    found = check(
+        network(
+            nat_gateways=[nat_gateway(name="prod")],
+            subnets=[subnet("subnet-a"), subnet("subnet-b")],
+            route_tables=[
+                table(
+                    "rtb-2",
+                    subnet_ids=["subnet-b"],
+                    routes=[
+                        default_nat("nat-abc"),
+                        endpoint_route("vpce-s3"),
+                    ],
+                ),
+                table(
+                    "rtb-1", subnet_ids=["subnet-a"], routes=[default_nat("nat-abc")]
+                ),
+            ],
+            gateway_endpoints=[endpoint("vpce-s3", "s3", ["rtb-2"])],
+            lambdas=[fn("both", ["subnet-a", "subnet-b"])],
+        )
+    )
+    assert [item.missing for item in found] == [("s3", "dynamodb"), ("dynamodb",)]
+    assert [item.subnets[0].id for item in found] == ["subnet-a", "subnet-b"]
+    assert [item.lambda_count for item in found] == [1, 1]
+
+
