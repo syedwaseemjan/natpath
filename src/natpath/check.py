@@ -118,3 +118,25 @@ def _nat_target(table: RouteTable) -> str | None:
     return None
 
 
+def _open_doors(
+    table: RouteTable, endpoints: Sequence[GatewayEndpoint]
+) -> frozenset[Service]:
+    """Services reached by an active route to an available gateway endpoint.
+
+    An endpoint that only exists in the VPC, or only on another route table,
+    is not a door for this table. A blackhole route is not a door either.
+    """
+    by_id = {endpoint.id: endpoint for endpoint in endpoints}
+    open_services: set[Service] = set()
+    for route in table.routes:
+        if route.state != "active" or not route.gateway_id:
+            continue
+        endpoint = by_id.get(route.gateway_id)
+        if endpoint is None or endpoint.state != "available":
+            continue
+        if endpoint.vpc_id != table.vpc_id:
+            continue
+        open_services.add(endpoint.service)
+    return frozenset(open_services)
+
+
