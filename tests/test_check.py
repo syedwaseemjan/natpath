@@ -56,3 +56,29 @@ def test_missing_doors_name_the_subnets_and_count_each_lambda_once() -> None:
     assert finding.lambda_count == 12
 
 
+def test_both_free_doors_on_the_route_are_quiet() -> None:
+    found = check(
+        network(
+            nat_gateways=[nat_gateway()],
+            subnets=[subnet("subnet-a")],
+            route_tables=[
+                table(
+                    "rtb-111",
+                    is_main=True,
+                    routes=[
+                        default_nat("nat-abc"),
+                        endpoint_route("vpce-s3"),
+                        endpoint_route("vpce-ddb"),
+                    ],
+                )
+            ],
+            gateway_endpoints=[
+                endpoint("vpce-s3", "s3", ["rtb-111"]),
+                endpoint("vpce-ddb", "dynamodb", ["rtb-111"]),
+            ],
+            lambdas=[fn("job", ["subnet-a"])],
+        )
+    )
+    assert found == ()
+
+
