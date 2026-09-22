@@ -13,3 +13,11 @@ class Paginator:
         return self.pages
 
 
+class FakeAws:
+    def __init__(self, pages: dict[str, list[dict[str, Any]]]) -> None:
+        self.paginators = {name: Paginator(page) for name, page in pages.items()}
+
+    def get_paginator(self, name: str) -> Paginator:
+        return self.paginators[name]
+
+
