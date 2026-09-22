@@ -129,3 +129,13 @@ def _parse_route_table(item: Mapping[str, Any]) -> RouteTable | None:
     )
 
 
+def _parse_route(item: Mapping[str, Any]) -> Route:
+    return Route(
+        destination_cidr=_text(item.get("DestinationCidrBlock")),
+        destination_prefix_list_id=_text(item.get("DestinationPrefixListId")),
+        nat_gateway_id=_text(item.get("NatGatewayId")),
+        gateway_id=_text(item.get("GatewayId")),
+        state=_text(item.get("State")) or "",
+    )
+
+
