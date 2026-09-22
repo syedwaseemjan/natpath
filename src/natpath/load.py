@@ -17,3 +17,20 @@ from natpath.model import (
 _GATEWAY_FILTER = [{"Name": "vpc-endpoint-type", "Values": ["Gateway"]}]
 
 
+def load_network(ec2: Any, lambda_client: Any, region: str) -> Network:
+    """Read one region through the AWS paginators and return a Network."""
+    return network_from_descriptions(
+        region=region,
+        nat_gateways=_collect(ec2, "describe_nat_gateways", "NatGateways"),
+        subnets=_collect(ec2, "describe_subnets", "Subnets"),
+        route_tables=_collect(ec2, "describe_route_tables", "RouteTables"),
+        vpc_endpoints=_collect(
+            ec2,
+            "describe_vpc_endpoints",
+            "VpcEndpoints",
+            Filters=_GATEWAY_FILTER,
+        ),
+        functions=_collect(lambda_client, "list_functions", "Functions"),
+    )
+
+
