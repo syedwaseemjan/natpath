@@ -78,3 +78,8 @@ def _label(name: str | None, id_: str) -> str:
     return id_
 
 
+def _shown(name: str | None) -> str | None:
+    if name is None:
+        return None
+    cleaned = " ".join(name.split())
+    return cleaned or None
