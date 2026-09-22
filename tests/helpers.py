@@ -27,3 +27,20 @@ def nat_gateway(
     return NatGateway(id=id, vpc_id=vpc, name=name, state=state)
 
 
+def route(
+    *,
+    cidr: str | None = None,
+    prefix: str | None = None,
+    nat: str | None = None,
+    gateway: str | None = None,
+    state: str = "active",
+) -> Route:
+    return Route(
+        destination_cidr=cidr,
+        destination_prefix_list_id=prefix,
+        nat_gateway_id=nat,
+        gateway_id=gateway,
+        state=state,
+    )
+
+
