@@ -110,3 +110,10 @@ def explain_client_error(exc: ClientError) -> str:
     return f"AWS request failed: {operation} ({code})."
 
 
+def _flag(args: argparse.Namespace, name: str) -> str | None:
+    value = getattr(args, name, None)
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return value
+    raise NatpathError(f"Internal error: --{name} was not a string.")
