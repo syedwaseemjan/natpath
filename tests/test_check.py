@@ -254,3 +254,19 @@ def test_doors_on_the_main_table_do_not_cover_an_explicit_subnet() -> None:
     assert found[0].nat_id == "nat-abc"
 
 
+def test_internet_gateway_default_route_is_quiet() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-a")],
+            route_tables=[
+                table(
+                    "rtb-main",
+                    is_main=True,
+                    routes=[route(cidr="0.0.0.0/0", gateway="igw-1")],
+                )
+            ],
+        )
+    )
+    assert found == ()
+
+
