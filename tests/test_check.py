@@ -132,3 +132,28 @@ def test_an_endpoint_on_another_route_table_is_not_this_subnets_door() -> None:
     assert [item.id for item in found[0].subnets] == ["subnet-a"]
 
 
+def test_blackhole_route_is_not_a_door() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-a")],
+            route_tables=[
+                table(
+                    "rtb-111",
+                    subnet_ids=["subnet-a"],
+                    routes=[
+                        default_nat("nat-abc"),
+                        endpoint_route("vpce-s3", state="blackhole"),
+                        endpoint_route("vpce-ddb"),
+                    ],
+                )
+            ],
+            gateway_endpoints=[
+                endpoint("vpce-s3", "s3", ["rtb-111"]),
+                endpoint("vpce-ddb", "dynamodb", ["rtb-111"]),
+            ],
+        )
+    )
+    assert len(found) == 1
+    assert found[0].missing == ("s3",)
+
+
