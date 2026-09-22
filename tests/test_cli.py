@@ -79,3 +79,14 @@ def test_help_and_version_exit_0() -> None:
     assert version_exit.value.code == 0
 
 
+def test_missing_region_does_not_call_aws() -> None:
+    class Session:
+        region_name = None
+
+        def client(self, name: str) -> object:
+            raise AssertionError(name)
+
+    with pytest.raises(NatpathError, match="No AWS region"):
+        read_network(None, None, session_factory=lambda **kwargs: Session())
+
+
