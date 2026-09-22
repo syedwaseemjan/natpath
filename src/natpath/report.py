@@ -14,3 +14,26 @@ def render(findings: Sequence[Finding]) -> str:
     return "\n\n".join(_render_finding(finding) for finding in findings) + "\n"
 
 
+def _render_finding(finding: Finding) -> str:
+    lines = [_nat_heading(finding)]
+    if len(finding.subnets) == 1:
+        lines.append("  This private subnet sends all outside traffic through it:")
+    else:
+        lines.append("  These private subnets send all outside traffic through it:")
+    lines.extend(f"    {_label(subnet.name, subnet.id)}" for subnet in finding.subnets)
+    if len(finding.route_tables) == 1:
+        lines.append("  Route table:")
+    else:
+        lines.append("  Route tables:")
+    lines.extend(
+        f"    {_label(table.name, table.id)}" for table in finding.route_tables
+    )
+    for service in _ordered(finding.missing):
+        lines.append(f"  There is no free private door for {_LABELS[service]}.")
+    lines.append(f"  {_lambda_sentence(finding.lambda_count)}")
+    traffic, fix = _closing(finding.missing)
+    lines.append(f"  {traffic}")
+    lines.append(f"  {fix}")
+    return "\n".join(lines)
+
+
