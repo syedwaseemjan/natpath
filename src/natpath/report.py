@@ -71,3 +71,10 @@ def _ordered(missing: Sequence[Service]) -> tuple[Service, ...]:
     return tuple(service for service in _ORDER if service in present)
 
 
+def _label(name: str | None, id_: str) -> str:
+    shown = _shown(name)
+    if shown:
+        return f"{shown} ({id_})"
+    return id_
+
+
