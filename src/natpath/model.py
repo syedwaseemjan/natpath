@@ -22,3 +22,13 @@ class Route:
     state: str
 
 
+@dataclass(frozen=True, slots=True)
+class RouteTable:
+    id: str
+    vpc_id: str
+    name: str | None
+    is_main: bool
+    subnet_ids: tuple[str, ...]
+    routes: tuple[Route, ...]
+
+
