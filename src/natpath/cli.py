@@ -23,3 +23,7 @@ from natpath.report import render
 _DENIED = frozenset({"UnauthorizedOperation", "AccessDenied", "AccessDeniedException"})
 
 
+class NatpathError(Exception):
+    """The command could not read the network."""
+
+
