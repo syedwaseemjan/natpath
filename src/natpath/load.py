@@ -75,3 +75,16 @@ def _parse_all(items: Iterable[Mapping[str, Any]], parse: Any) -> list[Any]:
     return parsed
 
 
+def _parse_nat_gateway(item: Mapping[str, Any]) -> NatGateway | None:
+    nat_id = _text(item.get("NatGatewayId"))
+    vpc_id = _text(item.get("VpcId"))
+    if nat_id is None or vpc_id is None:
+        return None
+    return NatGateway(
+        id=nat_id,
+        vpc_id=vpc_id,
+        name=_name(item),
+        state=_text(item.get("State")) or "",
+    )
+
+
