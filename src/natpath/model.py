@@ -78,3 +78,11 @@ class RouteTableRef:
     name: str | None
 
 
+@dataclass(frozen=True, slots=True)
+class Finding:
+    nat_id: str
+    nat_name: str | None
+    subnets: tuple[Subnet, ...]
+    route_tables: tuple[RouteTableRef, ...]
+    missing: tuple[Service, ...]
+    lambda_count: int
