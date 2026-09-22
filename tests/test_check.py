@@ -223,3 +223,34 @@ def test_main_table_includes_only_subnets_without_an_explicit_association() -> N
     assert [item.id for item in found[0].route_tables] == ["rtb-main"]
 
 
+def test_doors_on_the_main_table_do_not_cover_an_explicit_subnet() -> None:
+    found = check(
+        network(
+            subnets=[subnet("subnet-public"), subnet("subnet-private")],
+            route_tables=[
+                table(
+                    "rtb-main",
+                    is_main=True,
+                    routes=[
+                        route(cidr="0.0.0.0/0", gateway="igw-1"),
+                        endpoint_route("vpce-s3"),
+                        endpoint_route("vpce-ddb"),
+                    ],
+                ),
+                table(
+                    "rtb-private",
+                    subnet_ids=["subnet-private"],
+                    routes=[default_nat("nat-abc")],
+                ),
+            ],
+            gateway_endpoints=[
+                endpoint("vpce-s3", "s3", ["rtb-main"]),
+                endpoint("vpce-ddb", "dynamodb", ["rtb-main"]),
+            ],
+        )
+    )
+    assert len(found) == 1
+    assert [item.id for item in found[0].subnets] == ["subnet-private"]
+    assert found[0].nat_id == "nat-abc"
+
+
