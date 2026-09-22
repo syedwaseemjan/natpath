@@ -44,3 +44,11 @@ def _nat_heading(finding: Finding) -> str:
     return f"NAT gateway {finding.nat_id}"
 
 
+def _lambda_sentence(count: int) -> str:
+    if count == 0:
+        return "No Lambdas run in these subnets."
+    if count == 1:
+        return "1 Lambda runs in these subnets."
+    return f"{count} Lambdas run in these subnets."
+
+
