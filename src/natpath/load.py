@@ -202,3 +202,11 @@ def _service_kind(service_name: str) -> Service | None:
     return None
 
 
+def _association_active(assoc: Mapping[str, Any]) -> bool:
+    state_obj = assoc.get("AssociationState")
+    if not isinstance(state_obj, Mapping):
+        return True
+    state = state_obj.get("State")
+    return state in (None, "associated")
+
+
