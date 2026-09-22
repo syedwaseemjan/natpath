@@ -186,3 +186,19 @@ def _parse_lambda(item: Mapping[str, Any]) -> LambdaFunction | None:
     return LambdaFunction(name=name, subnet_ids=_unique(cleaned))
 
 
+def _service_kind(service_name: str) -> Service | None:
+    """Classify a gateway endpoint service name.
+
+    Commercial and GovCloud names look like com.amazonaws.us-east-1.s3.
+    China names look like cn.com.amazonaws.cn-north-1.dynamodb.
+    """
+    parts = service_name.removeprefix("cn.").split(".")
+    if len(parts) != 4 or parts[0] != "com" or parts[1] != "amazonaws":
+        return None
+    if parts[3] == "s3":
+        return "s3"
+    if parts[3] == "dynamodb":
+        return "dynamodb"
+    return None
+
+
