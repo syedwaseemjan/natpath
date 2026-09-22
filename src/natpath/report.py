@@ -66,3 +66,8 @@ def _closing(missing: Sequence[Service]) -> tuple[str, str]:
     )
 
 
+def _ordered(missing: Sequence[Service]) -> tuple[Service, ...]:
+    present = set(missing)
+    return tuple(service for service in _ORDER if service in present)
+
+
