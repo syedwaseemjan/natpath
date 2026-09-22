@@ -64,3 +64,14 @@ def _collect(client: Any, operation: str, key: str, **kwargs: Any) -> list[Any]:
     return items
 
 
+def _parse_all(items: Iterable[Mapping[str, Any]], parse: Any) -> list[Any]:
+    parsed: list[Any] = []
+    for item in items:
+        if not isinstance(item, Mapping):
+            continue
+        value = parse(item)
+        if value is not None:
+            parsed.append(value)
+    return parsed
+
+
