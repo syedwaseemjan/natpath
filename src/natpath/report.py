@@ -52,3 +52,17 @@ def _lambda_sentence(count: int) -> str:
     return f"{count} Lambdas run in these subnets."
 
 
+def _closing(missing: Sequence[Service]) -> tuple[str, str]:
+    names = [_LABELS[service] for service in _ordered(missing)]
+    if len(names) == 1:
+        return (
+            f"Their {names[0]} traffic is on the NAT bill.",
+            "Adding the free door takes that traffic off the bill.",
+        )
+    joined = " and ".join(names)
+    return (
+        f"Their {joined} traffic is on the NAT bill.",
+        "Adding the free doors takes that traffic off the bill.",
+    )
+
+
