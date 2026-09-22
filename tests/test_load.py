@@ -83,3 +83,11 @@ def _nat(nat_id: str, name: str | None = None) -> dict[str, object]:
     return item
 
 
+def _subnet(subnet_id: str, name: str) -> dict[str, object]:
+    return {
+        "SubnetId": subnet_id,
+        "VpcId": "vpc-1",
+        "Tags": [{"Key": "Name", "Value": name}],
+    }
+
+
