@@ -90,3 +90,11 @@ def test_missing_region_does_not_call_aws() -> None:
         read_network(None, None, session_factory=lambda **kwargs: Session())
 
 
+def test_unknown_profile_is_reported() -> None:
+    def factory(**kwargs: object) -> object:
+        raise ProfileNotFound(profile="prod")
+
+    with pytest.raises(NatpathError, match="prod"):
+        read_network("us-east-1", "prod", session_factory=factory)
+
+
