@@ -89,3 +89,21 @@ class _Piece:
         self.subnets = subnets
 
 
+def _subnets_for_table(
+    table: RouteTable,
+    subnets_by_vpc: Mapping[str, Sequence[Subnet]],
+    explicit_ids: Mapping[str, set[str]],
+) -> tuple[Subnet, ...]:
+    chosen: dict[str, Subnet] = {}
+    explicit_here = set(table.subnet_ids)
+    for subnet in subnets_by_vpc.get(table.vpc_id, ()):
+        if subnet.id in explicit_here:
+            chosen[subnet.id] = subnet
+    if table.is_main:
+        taken = explicit_ids.get(table.vpc_id, set())
+        for subnet in subnets_by_vpc.get(table.vpc_id, ()):
+            if subnet.id not in taken:
+                chosen[subnet.id] = subnet
+    return tuple(chosen.values())
+
+
