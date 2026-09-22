@@ -32,3 +32,19 @@ class RouteTable:
     routes: tuple[Route, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class GatewayEndpoint:
+    """A gateway VPC endpoint for S3 or DynamoDB.
+
+    The free door is an active route on a route table whose gateway id is
+    this endpoint. route_table_ids is the association list from AWS. The
+    route is what steers the traffic.
+    """
+
+    id: str
+    vpc_id: str
+    service: Service
+    state: str
+    route_table_ids: tuple[str, ...]
+
+
