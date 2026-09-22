@@ -145,3 +145,7 @@ def _finding_key(finding: Finding) -> tuple[str, str, tuple[Service, ...]]:
     return (finding.nat_id, table_id, finding.missing)
 
 
+def _subnet_key(subnet: Subnet) -> tuple[bool, str, str]:
+    return _named_key(subnet.name, subnet.id)
+
+
